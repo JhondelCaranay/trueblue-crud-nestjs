@@ -23,7 +23,9 @@ export class UsersService {
   }
 
   async findAll() {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   async findOne(id: number) {
@@ -50,12 +52,14 @@ export class UsersService {
   }
 
   async remove(id: number) {
+    console.log(id);
+
     const isUserExist = await this.prisma.user.findUnique({
       where: { id },
     });
 
     if (!isUserExist) throw new NotFoundException(`User id not found!`);
 
-    return await this.prisma.user.delete({ where: { id } });
+    return await this.prisma.user.delete({ where: { id: id } });
   }
 }

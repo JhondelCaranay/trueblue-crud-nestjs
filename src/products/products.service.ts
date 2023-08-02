@@ -12,18 +12,13 @@ export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createProductDto: CreateProductDto) {
-    // const isProductNameExist = await this.prisma.product.findFirst({
-    //   where: { name: createProductDto.name },
-    // });
-
-    // if (isProductNameExist)
-    //   throw new BadRequestException(`Item name already exist!`);
-
     return await this.prisma.product.create({ data: createProductDto });
   }
 
   async findAll() {
-    return await this.prisma.product.findMany();
+    return await this.prisma.product.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   async findOne(id: number) {
