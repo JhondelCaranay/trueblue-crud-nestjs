@@ -11,6 +11,20 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
+  async findUserOwnedProducts(userId: number) {
+    const isUserExist = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!isUserExist) throw new NotFoundException(`User id not found!`);
+
+    return await this.prisma.product.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+  }
+
   async create(createProductDto: CreateProductDto) {
     const isUserExist = await this.prisma.user.findUnique({
       where: { id: createProductDto.userId },
@@ -24,6 +38,7 @@ export class ProductsService {
   async findAll() {
     return await this.prisma.product.findMany({
       orderBy: { createdAt: 'desc' },
+      include: { user: true },
     });
   }
 
