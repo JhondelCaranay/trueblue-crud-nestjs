@@ -35,7 +35,14 @@ export class UsersService {
 
     if (!isUserExist) throw new NotFoundException(`User id not found!`);
 
-    return await this.prisma.user.findUnique({ where: { id } });
+    return await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        products: {
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
